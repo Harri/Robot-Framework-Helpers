@@ -1,0 +1,70 @@
+*** Settings ***
+Documentation     Variables and keywords that are often needed when testing web apps.
+Library           Selenium2Library
+Library           String
+
+*** Variables ***
+${ascii letters}    qwertASDFG
+${numbers}        1234567890
+${latin characters}    öåÖÅŔÔßÇţű
+${cyrillic characters}    ВГДЕЗабежз
+${arabic characters}    إبثحذشقغظئ
+${asian characters}    啊埃鞍肮岸些濡糟貸鳴
+${special characters}    *?=)(/&%¤#
+@{valid emails}    foo@example.com    foo@bar.example    foo+bar@example.com    "foo\@bar"@example.com     "foo bar"@example.com     "foo\\bar"@example.com     "foo@bar"@example.com
+...               foo/bar=xyzzy@example.com     $fobar@example.com     !foo!bar%xyzzy@example.com
+@{invalid emails}    foobar    foo@bar    @foobar
+
+*** Keywords ***
+Verify Label
+    [Arguments]    ${locator}    ${label}
+    [Documentation]    Verifies that label element identified by locator has tet label.
+    Element Text Should Be    css=label[for=${locator}]    ${label}
+
+Verify Placeholder
+    [Arguments]    ${locator}    ${placeholder}
+    [Documentation]    Verifies that element identified by locator has placeholder attribute with value of placeholder.
+    ${attr}    Get Element Attribute    ${locator}@${placeholder}
+    Should Be Equal    ${attr}    ${placeholder}
+
+Go To And Verify Page
+    [Arguments]    ${url}    ${title}=${empty}
+    [Documentation]    Navigates the active browser instance to the provided URL.\nVerifies that current URL is exactly url.\nVerifies that current page title equals title.
+    Go To    ${url}
+    Location Should Be    ${url}
+    Title Should Be    ${title}
+
+Input Text And Verify Field
+    [Arguments]    ${locator}    ${text}    ${label}=${empty}    ${placeholder}=${empty}
+    [Documentation]    Waits until page contain element identified by locator.\nTypes the given text into text field identified by locator.\nVerifies that proper label element and placeholder attribute are found.\nVerifes that text field value is what it was set to.
+    Wait Until Page Contains Element    ${locator}
+    Input Text    ${locator}    ${text}
+    Verify Label    ${locator}    ${label}
+    Verify Placeholder    ${locator}    ${placeholder}
+    ${value}    Get Value    ${locator}
+    Should Be Equal    ${value}    ${text}
+
+Input Password And Verify Field
+    [Arguments]    ${locator}    ${password}    ${label}=${empty}    ${placeholder}=${empty}
+    [Documentation]    Waits until page contain element identified by locator.\nTypes the given password into text field identified by locator.\nVerifies that proper label element and placeholder attribute are found.
+    Wait Until Page Contains Element    ${locator}
+    Input Password    ${locator}    ${password}
+    Verify Label    ${locator}    ${label}
+    Verify Placeholder    ${locator}    ${placeholder}
+
+Select Radio Button And Verify Field
+    [Arguments]    ${group_name}    ${value}    ${label}=${empty}
+    [Documentation]    Waits until page contain element identified by locator.\nSets selection of radio button group identified by group_name to value.\nThe radio button to be selected is located by two arguments: - group_name is used as the name of the radio input - value is used for the id attribute.\nVerfies that proper label element is found and that selected radio button is really selected.
+    Wait Until Page Contains Element    ${value}
+    Select Radio Button    ${group_name}    ${value}
+    Verify Label    ${value}    ${label}
+    Radio Button Should Be Set To    ${group_name}    ${value}
+
+Select Checkbox And Verify Field
+    [Arguments]    ${locator}    ${label}=${empty}    ${placeholder}=${empty}
+    [Documentation]    Waits until page contain element identified by locator.\nSelects checkbox identified by locator.\nVerifies that proper label element and placeholder attribute are found.\nVerifies checkbox identified by locator is selected/checked.
+    Wait Until Page Contains Element    ${locator}
+    Select Checkbox    ${locator}
+    Verify Label    ${locator}    ${label}
+    Checkbox Should Be Selected    ${locator}
+
