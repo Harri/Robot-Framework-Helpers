@@ -36,7 +36,7 @@ Input Text And Verify Field
     Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${locator}    ${label}
     Run Keyword Unless    '${placeholder}'=='${empty}'    Verify Placeholder    ${locator}    ${placeholder}
     ${value}    Get Value    ${locator}
-    Should Be Equal    ${value}    ${text}
+    Should Be Equal As Strings    ${value}    ${text}
 
 Input Password And Verify Field
     [Arguments]    ${locator}    ${password}    ${label}=${empty}    ${placeholder}=${empty}
@@ -55,10 +55,15 @@ Select Radio Button And Verify Field
     Radio Button Should Be Set To    ${group_name}    ${name}
 
 Select Checkbox And Verify Field
-    [Arguments]    ${locator}    ${label}=${empty}    ${placeholder}=${empty}
-    [Documentation]    Waits until page contain element identified by locator.\nSelects checkbox identified by locator.\nVerifies that proper label element and placeholder attribute are found.\nVerifies checkbox identified by locator is selected/checked.
-    Wait Until Page Contains Element    ${locator}
-    Select Checkbox    ${locator}
-    Verify Label    ${locator}    ${label}
-    Checkbox Should Be Selected    ${locator}
+    [Arguments]    ${id}    ${name}    ${label}=${empty}
+    [Documentation]    Waits until page contain element identified by id.\nSelects checkbox identified by name.\nVerifies that proper label element and placeholder attribute are found.\nVerifies checkbox identified by locator is selected/checked.
+    Wait Until Page Contains Element    ${id}
+    Select Checkbox    ${name}
+    Verify Label    ${id}    ${label}
+    Checkbox Should Be Selected    ${name}
+
+Generate Random Integer In Range
+    [Arguments]    ${min}=0    ${max}=sys.maxint
+    ${int}    Evaluate    random.randint(${min}, ${max})    random,sys
+    [Return]    ${int}
 
