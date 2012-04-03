@@ -1,16 +1,10 @@
 *** Settings ***
-Documentation     Variables and keywords that are often needed when testing web apps.\n\nCopyright (C) 2012 Harri Paavola\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n"Software"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be included\nin all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Documentation     Variables and keywords that are often needed when testing web apps.\n\nCopyright (C) 2012 Harri Paavola harri.paavola@gmail.com https://github.com/Harri/Robot-Framework-Helpers\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n"Software"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be included\nin all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Library           Selenium2Library
 Library           String
 
 *** Variables ***
-${ascii letters}    qwertASDFG
-${numbers}        1234567890
-${latin characters}    öåÖÅŔÔßÇţű
-${cyrillic characters}    ВГДЕЗабежз
-${arabic characters}    إبثحذشقغظئ
-${asian characters}    啊埃鞍肮岸些濡糟貸鳴
-${special characters}    *?=)(/&%¤#
+@{strings}        qwertASDFG    1234567890    öåÖÅŔÔßÇţű    ВГДЕЗабежз    إبثحذشقغظئ    啊埃鞍肮岸些濡糟貸鳴    *?=)(/&%¤#
 @{valid emails}    foo@example.com    foo@bar.example    foo+bar@example.com    "foo\@bar"@example.com    "foo bar"@example.com    "foo\\bar"@example.com    "foo@bar"@example.com
 ...               foo/bar=xyzzy@example.com    $fobar@example.com    !foo!bar%xyzzy@example.com
 @{invalid emails}    foobar    foo@bar    @foobar
@@ -39,8 +33,8 @@ Input Text And Verify Field
     [Documentation]    Waits until page contain element identified by locator.\nTypes the given text into text field identified by locator.\nVerifies that proper label element and placeholder attribute are found.\nVerifes that text field value is what it was set to.
     Wait Until Page Contains Element    ${locator}
     Input Text    ${locator}    ${text}
-    Verify Label    ${locator}    ${label}
-    Verify Placeholder    ${locator}    ${placeholder}
+    Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${locator}    ${label}
+    Run Keyword Unless    '${placeholder}'=='${empty}'    Verify Placeholder    ${locator}    ${placeholder}
     ${value}    Get Value    ${locator}
     Should Be Equal    ${value}    ${text}
 
@@ -53,12 +47,12 @@ Input Password And Verify Field
     Verify Placeholder    ${locator}    ${placeholder}
 
 Select Radio Button And Verify Field
-    [Arguments]    ${group_name}    ${value}    ${label}=${empty}
-    [Documentation]    Waits until page contain element identified by locator.\nSets selection of radio button group identified by group_name to value.\nThe radio button to be selected is located by two arguments: - group_name is used as the name of the radio input - value is used for the id attribute.\nVerfies that proper label element is found and that selected radio button is really selected.
-    Wait Until Page Contains Element    ${value}
-    Select Radio Button    ${group_name}    ${value}
-    Verify Label    ${value}    ${label}
-    Radio Button Should Be Set To    ${group_name}    ${value}
+    [Arguments]    ${group_name}    ${id}    ${name}    ${label}=${empty}
+    [Documentation]    Waits until page contain element identified by locator.\nSets selection of radio button group identified by group_name to name.\nThe radio button to be selected is located by two arguments: - group_name is used as the value of the radio input - name is used for the name attribute.\nVerfies that proper label element is found and that selected radio button is really selected.
+    Wait Until Page Contains Element    ${id}
+    Select Radio Button    ${group_name}    ${name}
+    Verify Label    ${id}    ${label}
+    Radio Button Should Be Set To    ${group_name}    ${name}
 
 Select Checkbox And Verify Field
     [Arguments]    ${locator}    ${label}=${empty}    ${placeholder}=${empty}
