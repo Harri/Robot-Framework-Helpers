@@ -18,7 +18,7 @@ Verify Label
 Verify Placeholder
     [Arguments]    ${locator}    ${placeholder}
     [Documentation]    Verifies that element identified by locator has placeholder attribute with value of placeholder.
-    ${attr}    Get Element Attribute    ${locator}@${placeholder}
+    ${attr}    Get Element Attribute    ${locator}@placeholder
     Should Be Equal    ${attr}    ${placeholder}
 
 Go To And Verify Page
@@ -70,6 +70,27 @@ Generate Random Integer In Range
 Element Should Not Contain
     [Arguments]    ${haystack}    ${needle}
     [Documentation]    Verifies that ${needle} is not part of ${haystack}
+    Wait Until Page Contains Element    ${haystack}
     ${error message}    Run Keyword And Expect Error    *    Element Should Contain    ${haystack}    ${needle}
     Should Contain    ${error message}    Element '${haystack}' should have contained text '${needle}' but its text was
+
+Wait Until Element Is Visibile
+    [Arguments]    ${locator}
+    ${timeout}    Get Selenium Timeout
+    Wait Until Keyword Succeeds    ${timeout}    1    Element Should Be Visible    ${locator}
+
+Wait Until Element Is Not Visibile
+    [Arguments]    ${locator}
+    ${timeout}    Get Selenium Timeout
+    Wait Until Keyword Succeeds    ${timeout}    1    Element Should Not Be Visible    ${locator}
+
+Wait Until Element Contains
+    [Arguments]    ${locator}    ${expected}
+    ${timeout}    Get Selenium Timeout
+    Wait Until Keyword Succeeds    ${timeout}    1    Element Should Contain    ${locator}    ${expected}
+
+Wait Until Element Does Not Contain
+    [Arguments]    ${locator}    ${expected}
+    ${timeout}    Get Selenium Timeout
+    Wait Until Keyword Succeeds    ${timeout}    1    Element Should Not Contain    ${locator}    ${expected}
 
