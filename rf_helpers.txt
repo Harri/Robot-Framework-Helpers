@@ -43,8 +43,8 @@ Input Password And Verify Field
     [Documentation]    Waits until page contain element identified by locator.\nTypes the given password into text field identified by locator.\nVerifies that proper label element and placeholder attribute are found.
     Wait Until Page Contains Element    ${locator}
     Input Password    ${locator}    ${password}
-    Verify Label    ${locator}    ${label}
-    Verify Placeholder    ${locator}    ${placeholder}
+    Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${locator}    ${label}
+    Run Keyword Unless    '${placeholder}'=='${empty}'    Verify Placeholder    ${locator}    ${placeholder}
 
 Select Radio Button And Verify Field
     [Arguments]    ${group_name}    ${id}    ${name}    ${label}=${empty}
@@ -59,11 +59,19 @@ Select Checkbox And Verify Field
     [Documentation]    Waits until page contain element identified by id.\nSelects checkbox identified by name.\nVerifies that proper label element and placeholder attribute are found.\nVerifies checkbox identified by locator is selected/checked.
     Wait Until Page Contains Element    ${id}
     Select Checkbox    ${name}
-    Verify Label    ${id}    ${label}
+    Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${id}    ${label}
     Checkbox Should Be Selected    ${name}
+
+Select From List And Verify Field
+    [Arguments]    ${locator}    ${item}    ${label}=${empty}
+    [Documentation]    Selects item from list identified by locator.\nIf label is set, verifies that it is correct.
+    Wait Until Page Contains Element    ${locator}
+    Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${locator}    ${label}
+    Select From List    ${locator}    ${item}
 
 Generate Random Integer In Range
     [Arguments]    ${min}=0    ${max}=sys.maxint
+    [Documentation]    Returns random integer between min and max values. Min defaults to 0 and max to maxint.
     ${int}    Evaluate    random.randint(${min}, ${max})    random,sys
     [Return]    ${int}
 
@@ -74,23 +82,46 @@ Element Should Not Contain
     ${error message}    Run Keyword And Expect Error    *    Element Should Contain    ${haystack}    ${needle}
     Should Contain    ${error message}    Element '${haystack}' should have contained text '${needle}' but its text was
 
-Wait Until Element Is Visibile
+Wait Until Element Is Visible
     [Arguments]    ${locator}
+    [Documentation]    Waits until element is visible.\nTimeouts after Selenium Timeout.
     ${timeout}    Get Selenium Timeout
     Wait Until Keyword Succeeds    ${timeout}    1    Element Should Be Visible    ${locator}
 
-Wait Until Element Is Not Visibile
+Wait Until Element Is Not Visible
     [Arguments]    ${locator}
+    [Documentation]    Waits until element is not visible.\nTimeouts after Selenium Timeout.
     ${timeout}    Get Selenium Timeout
     Wait Until Keyword Succeeds    ${timeout}    1    Element Should Not Be Visible    ${locator}
 
 Wait Until Element Contains
     [Arguments]    ${locator}    ${expected}
+    [Documentation]    Waits until specified element contains specified text.\nTimeouts after Selenium Timeout.
     ${timeout}    Get Selenium Timeout
     Wait Until Keyword Succeeds    ${timeout}    1    Element Should Contain    ${locator}    ${expected}
 
 Wait Until Element Does Not Contain
     [Arguments]    ${locator}    ${expected}
+    [Documentation]    Waits until specified element does not contain specified text.\nTimeouts after Selenium Timeout.
     ${timeout}    Get Selenium Timeout
     Wait Until Keyword Succeeds    ${timeout}    1    Element Should Not Contain    ${locator}    ${expected}
+
+Run Keyword And Log Warning
+    [Arguments]    ${keyword}    @{arguments}
+    [Documentation]    Runs given keyword with given parameters and logs the error message as a warning.\nThis is useful when some features of the product under test are not yet implemented and you don't want to fail tests because of that.
+    ${error code}    ${error msg}    Run Keyword And Ignore Error    ${keyword}    @{arguments}
+    Log    ${error msg}    WARN
+
+Input Validation For Field
+    [Arguments]    ${field}    ${rest field}    ${value}    ${pass}=pass
+    [Documentation]    Inputs given value to given field.\nThen focuses to given rest field so that client side input validation is triggered.\nThen verifies that user is shown or not shown error label as specified in pass argument.
+    Input Text And Verify Field    ${field}    ${value}
+    Focus    ${rest field}
+    Run Keyword If    '${pass}'=='pass'    Element Should Not Be Visible    css=label[for=${field}].error
+    Run Keyword Unless    '${pass}'=='pass'    Element Should Be Visible    css=label[for=${field}].error
+
+Verify Field Content
+    [Arguments]    ${locator}    ${content}
+    ${value}    Get Value    ${locator}
+    Should Be Equal As Strings    ${value}    ${content}
 
