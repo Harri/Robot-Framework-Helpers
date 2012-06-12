@@ -122,6 +122,7 @@ Input Validation For Field
 
 Verify Field Content
     [Arguments]    ${locator}    ${content}
+    [Documentation]    Verifies that field identified by locator has the same value as speficied by content
     ${value}    Get Value    ${locator}
     Should Be Equal As Strings    ${value}    ${content}
 
