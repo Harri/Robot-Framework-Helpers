@@ -1,11 +1,31 @@
 *** Settings ***
-Documentation     Variables and keywords that are often needed when testing web apps.\n\nCopyright (C) 2012 Harri Paavola harri.paavola@gmail.com https://github.com/Harri/Robot-Framework-Helpers\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n"Software"), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be included\nin all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-Library           Selenium2Library
+Documentation     Variables and keywords that are often needed when testing web apps.
+...
+...               Copyright (C) 2012 Harri Paavola harri.paavola@gmail.com https://github.com/Harri/Robot-Framework-Helpers
+...
+...               Permission is hereby granted, free of charge, to any person obtaining
+...               a copy of this software and associated documentation files (the
+...               "Software"), to deal in the Software without restriction, including
+...               without limitation the rights to use, copy, modify, merge, publish,
+...               distribute, sublicense, and/or sell copies of the Software, and to
+...               permit persons to whom the Software is furnished to do so, subject to
+...               the following conditions:
+...
+...               The above copyright notice and this permission notice shall be included
+...               in all copies or substantial portions of the Software.
+...
+...               THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+...               EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+...               MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+...               IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+...               CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+...               TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+...               SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Library           String
 
 *** Variables ***
 @{strings}        qwertASDFG    1234567890    öåÖÅŔÔßÇţű    ВГДЕЗабежз    إبثحذشقغظئ    啊埃鞍肮岸些濡糟貸鳴    *?=)(/&%¤#
-@{valid emails}    foo@example.com    foo@bar.example    foo+bar@example.com    "foo\@bar"@example.com    "foo bar"@example.com    "foo\\bar"@example.com    "foo@bar"@example.com
+@{valid emails}    foobar@example.com    foobar@bar.example    foo+bar@example.com    "foo\@bar"@example.com    "foo bar"@example.com    "foo\\bar"@example.com    "foo@bar"@example.com
 ...               foo/bar=xyzzy@example.com    $fobar@example.com    !foo!bar%xyzzy@example.com
 @{invalid emails}    foobar    foo@bar    @foobar
 
@@ -23,14 +43,19 @@ Verify Placeholder
 
 Go To And Verify Page
     [Arguments]    ${url}    ${title}=${empty}
-    [Documentation]    Navigates the active browser instance to the provided URL.\nVerifies that current URL is exactly url.\nVerifies that current page title equals title.
+    [Documentation]    Navigates the active browser instance to the provided URL.
+    ...    Verifies that current URL is exactly url.
+    ...    Verifies that current page title equals title.
     Go To    ${url}
     Location Should Be    ${url}
-    Title Should Be    ${title}
+    Run Keyword Unless    '${title}'=='${empty}'    Title Should Be    ${title}
 
 Input Text And Verify Field
     [Arguments]    ${locator}    ${text}    ${label}=${empty}    ${placeholder}=${empty}
-    [Documentation]    Waits until page contain element identified by locator.\nTypes the given text into text field identified by locator.\nVerifies that proper label element and placeholder attribute are found.\nVerifes that text field value is what it was set to.
+    [Documentation]    Waits until page contain element identified by locator.
+    ...    Types the given text into text field identified by locator.
+    ...    Verifies that proper label element and placeholder attribute are found.
+    ...    Verifes that text field value is what it was set to.
     Wait Until Page Contains Element    ${locator}
     Input Text    ${locator}    ${text}
     Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${locator}    ${label}
@@ -40,23 +65,30 @@ Input Text And Verify Field
 
 Input Password And Verify Field
     [Arguments]    ${locator}    ${password}    ${label}=${empty}    ${placeholder}=${empty}
-    [Documentation]    Waits until page contain element identified by locator.\nTypes the given password into text field identified by locator.\nVerifies that proper label element and placeholder attribute are found.
+    [Documentation]    Waits until page contain element identified by locator.
+    ...    Types the given password into text field identified by locator.
+    ...    Verifies that proper label element and placeholder attribute are found.
     Wait Until Page Contains Element    ${locator}
     Input Password    ${locator}    ${password}
     Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${locator}    ${label}
     Run Keyword Unless    '${placeholder}'=='${empty}'    Verify Placeholder    ${locator}    ${placeholder}
 
 Select Radio Button And Verify Field
-    [Arguments]    ${group_name}    ${id}    ${name}    ${label}=${empty}
-    [Documentation]    Waits until page contain element identified by locator.\nSets selection of radio button group identified by group_name to name.\nThe radio button to be selected is located by two arguments: - group_name is used as the value of the radio input - name is used for the name attribute.\nVerfies that proper label element is found and that selected radio button is really selected.
+    [Arguments]    ${group_name}    ${id}    ${value}    ${label}=${empty}
+    [Documentation]    Waits until page contain element identified by locator.
+    ...    Sets selection of radio button group identified by group_name to name.
+    ...    The radio button to be selected is located by two arguments: - group_name is used as the name of the radio input - value is used for the value attribute.
+    ...    Verfies that proper label element is found and that selected radio button is really selected.
     Wait Until Page Contains Element    ${id}
-    Select Radio Button    ${group_name}    ${name}
+    Select Radio Button    ${group_name}    ${id}
     Verify Label    ${id}    ${label}
-    Radio Button Should Be Set To    ${group_name}    ${name}
 
 Select Checkbox And Verify Field
     [Arguments]    ${id}    ${name}    ${label}=${empty}
-    [Documentation]    Waits until page contain element identified by id.\nSelects checkbox identified by name.\nVerifies that proper label element and placeholder attribute are found.\nVerifies checkbox identified by locator is selected/checked.
+    [Documentation]    Waits until page contain element identified by id.
+    ...    Selects checkbox identified by name.
+    ...    Verifies that proper label element and placeholder attribute are found.
+    ...    Verifies checkbox identified by locator is selected/checked.
     Wait Until Page Contains Element    ${id}
     Select Checkbox    ${name}
     Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${id}    ${label}
@@ -64,7 +96,8 @@ Select Checkbox And Verify Field
 
 Select From List And Verify Field
     [Arguments]    ${locator}    ${item}    ${label}=${empty}
-    [Documentation]    Selects item from list identified by locator.\nIf label is set, verifies that it is correct.
+    [Documentation]    Selects item from list identified by locator.
+    ...    If label is set, verifies that it is correct.
     Wait Until Page Contains Element    ${locator}
     Run Keyword Unless    '${label}'=='${empty}'    Verify Label    ${locator}    ${label}
     Select From List    ${locator}    ${item}
@@ -84,41 +117,48 @@ Element Should Not Contain
 
 Wait Until Element Is Visible
     [Arguments]    ${locator}
-    [Documentation]    Waits until element is visible.\nTimeouts after Selenium Timeout.
+    [Documentation]    Waits until element is visible.
+    ...    Timeouts after Selenium Timeout.
     ${timeout}    Get Selenium Timeout
     Wait Until Keyword Succeeds    ${timeout}    1    Element Should Be Visible    ${locator}
 
 Wait Until Element Is Not Visible
     [Arguments]    ${locator}
-    [Documentation]    Waits until element is not visible.\nTimeouts after Selenium Timeout.
+    [Documentation]    Waits until element is not visible.
+    ...    Timeouts after Selenium Timeout.
     ${timeout}    Get Selenium Timeout
     Wait Until Keyword Succeeds    ${timeout}    1    Element Should Not Be Visible    ${locator}
 
 Wait Until Element Contains
     [Arguments]    ${locator}    ${expected}
-    [Documentation]    Waits until specified element contains specified text.\nTimeouts after Selenium Timeout.
+    [Documentation]    Waits until specified element contains specified text.
+    ...    Timeouts after Selenium Timeout.
     ${timeout}    Get Selenium Timeout
     Wait Until Keyword Succeeds    ${timeout}    1    Element Should Contain    ${locator}    ${expected}
 
 Wait Until Element Does Not Contain
     [Arguments]    ${locator}    ${expected}
-    [Documentation]    Waits until specified element does not contain specified text.\nTimeouts after Selenium Timeout.
+    [Documentation]    Waits until specified element does not contain specified text.
+    ...    Timeouts after Selenium Timeout.
     ${timeout}    Get Selenium Timeout
     Wait Until Keyword Succeeds    ${timeout}    1    Element Should Not Contain    ${locator}    ${expected}
 
 Run Keyword And Log Warning
     [Arguments]    ${keyword}    @{arguments}
-    [Documentation]    Runs given keyword with given parameters and logs the error message as a warning.\nThis is useful when some features of the product under test are not yet implemented and you don't want to fail tests because of that.
+    [Documentation]    Runs given keyword with given parameters and logs the error message as a warning.
+    ...    This is useful when some features of the product under test are not yet implemented and you don't want to fail tests because of that.
     ${error code}    ${error msg}    Run Keyword And Ignore Error    ${keyword}    @{arguments}
     Log    ${error msg}    WARN
 
 Input Validation For Field
     [Arguments]    ${field}    ${rest field}    ${value}    ${pass}=pass
-    [Documentation]    Inputs given value to given field.\nThen focuses to given rest field so that client side input validation is triggered.\nThen verifies that user is shown or not shown error label as specified in pass argument.
+    [Documentation]    Inputs given value to given field.
+    ...    Then focuses to given rest field so that client side input validation is triggered.
+    ...    Then verifies that user is shown or not shown error label as specified in pass argument.
     Input Text And Verify Field    ${field}    ${value}
     Focus    ${rest field}
-    Run Keyword If    '${pass}'=='pass'    Element Should Not Be Visible    css=label[for=${field}].error
-    Run Keyword Unless    '${pass}'=='pass'    Element Should Be Visible    css=label[for=${field}].error
+    Run Keyword If    '${pass}'=='pass'    Element Should Not Be Visible    ${field}_em_
+    Run Keyword Unless    '${pass}'=='pass'    Element Should Be Visible    ${field}_em_
 
 Verify Field Content
     [Arguments]    ${locator}    ${content}
@@ -126,3 +166,44 @@ Verify Field Content
     ${value}    Get Value    ${locator}
     Should Be Equal As Strings    ${value}    ${content}
 
+Click Label
+    [Arguments]    ${label}    ${index}=1
+    [Documentation]    Clicks label element which contains text ${label}.
+    ...    If there is more than one label with given text, specify index to match those labels.
+    Click Element    xpath=(//label[contains(., '${label}')])[${index}]
+
+Click Checkbox Label
+    [Arguments]    ${label}    ${index}=1    ${state}=selected
+    [Documentation]    Clicks given label element.
+    ...    If there are more than one same label, set ${index}.
+    ...    If ${state} is set to 'selected', verifies that checkbox with given label is selected.
+    ...    If ${state} is set to 'not selecte', verifies that checkbox with given label is not selected.
+    Click Label    ${label}    ${index}
+    ${id}    Get Element Attribute    xpath=(//label[contains(., '${label}')])[${index}]@for
+    Run Keyword If    '${state}'=='selected'    Checkbox Should Be Selected    ${id}
+    Run Keyword If    '${state}'=='not selected'    Checkbox Should Not Be Selected    ${id}
+
+Click Radiobutton Label
+    [Arguments]    ${label}    ${group}    ${index}=1    ${state}=selected
+    [Documentation]    Clicks given label element.
+    ...    If there are more than one same label, set ${index}.
+    ...    If ${state} is set to 'selected', verifies that radiobutton with given label is selected.
+    ...    If ${state} is set to 'not selecte', verifies that radiobutton with given label is not selected.
+    Click Label    ${label}    ${index}
+    ${id}    Get Element Attribute    xpath=(//label[contains(., '${label}')])[${index}]@for
+    ${value}    Get Element Attribute    ${id}@value
+    Run Keyword If    '${state}'=='selected'    Radio Button Should Be Set To    ${group}    ${value}
+    Run Keyword If    '${state}'=='not selected'    Radio Button Should Not Be Selected    ${group}    ${value}
+
+Location Should Not Contain
+    [Arguments]    ${string}
+    ${url}    Get Location
+    Should Not Contain    ${url}    ${string}
+
+Get Random Item From List
+    [Arguments]    @{list}
+    [Documentation]    Returns random item from given list
+    ${lenght}    Get Length    ${list}
+    ${item}    Generate Random Integer In Range    0    ${lenght}-1
+    ${item}    Set Variable    @{list}[${item}]
+    [Return]    ${item}
